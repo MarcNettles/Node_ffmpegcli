@@ -100,7 +100,7 @@ app.get('/', (req,res) =>{ // (req,res) is likely where we'll be getting our sta
     // Note:  Commented Out Temporarily: -loglevel debug -v verbose -report 
 
     // Note: Cutting video syntax: "-i <inputfile> -ss <start of cut in HH:MM:SS or HH:MM:SS.SS format> -t <length of cut in HH:MM:SS or HH:MM:SS.SS format> [additional flags like -c:v copy] <outputfile> > <crash logs>"
-    // <UNCOMMENT ME> commands = "-loglevel debug -v verbose -report -i " + source + " -ss 00:00:00 -t 00:00:20 -c:v copy -c:a copy output.mp4 > /home/marc/Node_ffmpegcli/ffmpeg_crash_logs/crash_log.txt";
+    commands = "-loglevel debug -v verbose -report -i " + source + " -ss 00:00:00 -t 00:00:20 -c:v copy -c:a copy output.mp4 > /home/marc/Node_ffmpegcli/ffmpeg_crash_logs/crash_log.txt";
     //--------------------------------------------------------------------------------------------------//
 
 
@@ -116,7 +116,7 @@ app.get('/', (req,res) =>{ // (req,res) is likely where we'll be getting our sta
     */
     // Note: For converting to a different filetype, such as avi, we can't skip re-encoding
     
-    commands = "-loglevel debug -v verbose -report -i " + source + " -ss 00:00:10 -t 00:00:20 output.avi > /home/marc/Node_ffmpegcli/ffmpeg_crash_logs/crash_log.txt";
+    // <UNCOMMENT ME> commands = "-loglevel debug -v verbose -report -i " + source + " -ss 00:00:10 -t 00:00:20 output.avi > /home/marc/Node_ffmpegcli/ffmpeg_crash_logs/crash_log.txt";
     
     //--------------------------------------------------------------------------------------------------------//
 
