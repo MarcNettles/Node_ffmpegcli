@@ -85,90 +85,114 @@ app.get('/', (req,res) =>{ // (req,res) is likely where we'll be getting our sta
     * ffmpeg use YUV 4:4:4 as noted in the Converting a video to MP4 section of
     *  https://plutiedev.com/ffmpeg
     */
-    
-    //--------------------------------- Cutting MP4-MP4 ------------------------------------------------//
-    //-------------------------------------------------------------------------------------------------//
-    /*
-    * Note: If we're keeping the same filetype (mp4->mp4), we can skip re-encoding, speeding
-    * up processing so it only takes about 5 seconds, regardless of clip length.
-    */
-    
-    // Note: Commands to feed into ffmpeg.runSync(commands). It's exactly what you'd type into the command line interface (hence the -cli part of ffmpeg-cli).
-    // Note: -c:v copy -c:a copy speeds up our time to cut the video because it reuses the video and audio from the old clip so we don't have to reencode it.
-    // Note: "-loglevel debug -v verbose -report" is for logging. -report outputs the command line output and a log into a log file
-    // in the local directory.
-    // Note:  Commented Out Temporarily: -loglevel debug -v verbose -report 
-
-    // Note: Cutting video syntax: "-i <inputfile> -ss <start of cut in HH:MM:SS or HH:MM:SS.SS format> -t <length of cut in HH:MM:SS or HH:MM:SS.SS format> [additional flags like -c:v copy] <outputfile> > <crash logs>"
-    commands = "-loglevel debug -v verbose -report -i " + source + " -ss 00:00:00 -t 00:00:20 -c:v copy -c:a copy output.mp4 > /home/marc/Node_ffmpegcli/ffmpeg_crash_logs/crash_log.txt";
-    //--------------------------------------------------------------------------------------------------//
 
 
 
 
-    //------------------------------------ Cutting MP4-AVI ---------------------------------------------------//
-    //--------------------------------------------------------------------------------------------------------//
-    /*
-    * Note: Converting to a different filetype means we can't skip re-encoding.
-    * Re-encoding a 15 min clip of a 50 min video, going from mp4 to avi, took me
-    * roughly 2 minutes. Each additional 15 minutes took an additional 2 minutes,
-    * so for example a 45 min cut took a little under 6 minutes to finish.
-    */
-    // Note: For converting to a different filetype, such as avi, we can't skip re-encoding
-    
-    // <UNCOMMENT ME> commands = "-loglevel debug -v verbose -report -i " + source + " -ss 00:00:10 -t 00:00:20 output.avi > /home/marc/Node_ffmpegcli/ffmpeg_crash_logs/crash_log.txt";
-    
-    //--------------------------------------------------------------------------------------------------------//
+    //-------- Select What You'd Like to Do ----------//
+    // 1. Cut MP4 and output MP4  (cut video)
+    // 2. Cut MP4 and output AVI  (change filetype)
+    // 3. Cut MP4 and output MP4, but change the resolution to 640x480 (change resolution)
+    // 4. Splice Videos Together (combine videos)
+    command_selection = 1
 
 
 
+    if(command_selection == 1)
+    {
+      //--------------------------------- Cutting MP4-MP4 ------------------------------------------------//
+      //-------------------------------------------------------------------------------------------------//
+      /*
+      * Note: If we're keeping the same filetype (mp4->mp4), we can skip re-encoding, speeding
+      * up processing so it only takes about 5 seconds, regardless of clip length.
+      * 
+      * NOTE: Skipping re-encoding video causes black screen at start of video. Removed "-c:v copy" from the flags
+      */
+      
+      // Note: Commands to feed into ffmpeg.runSync(commands). It's exactly what you'd type into the command line interface (hence the -cli part of ffmpeg-cli).
+      // Note: -c:v copy -c:a copy speeds up our time to cut the video because it reuses the video and audio from the old clip so we don't have to reencode it.
+      // Note: "-loglevel debug -v verbose -report" is for logging. -report outputs the command line output and a log into a log file
+      // in the local directory.
+      // Note:  Commented Out Temporarily: -loglevel debug -v verbose -report 
 
-    //----------------------------------- Cutting MP4-MP4 and changing Resolution to 640x480 --------------------//
-    //-----------------------------------------------------------------------------------------------------------//
-    // Note: For converting to a different resolution, we'll test below to see
-    // how long it takes with and without re-encoding.
-
-    // Note: Solution: Don't run one 
-
-    // Note: Without re-encoding (mp4->mp4)
-    // <UNCOMMENT ME> commands = "-loglevel debug -v verbose -report -i " + source + " -ss 00:00:10 -t 00:00:20 -c:a copy -s 640x480 output.mp4 > /home/marc/Node_ffmpegcli/ffmpeg_crash_logs/crash_log.txt"; // Had to use sample.mp4 again because it seems like it converts the ENTIRE video to 640x480, which takes forever.
-
-    // Note With re-encoding (mp4->avi)
-    // <UNCOMMENT ME> commands = "-loglevel debug -v verbose -report -i " + source + " -ss 00:00:10 -t 00:00:20 -s 640x480 DToutput.avi > /home/marc/Node_ffmpegcli/ffmpeg_crash_logs/crash_log.txt";
-    
-    //--------------------------------------------------------------------------------------------------------//
+      // Note: Cutting video syntax: "-i <inputfile> -ss <start of cut in HH:MM:SS or HH:MM:SS.SS format> -t <length of cut in HH:MM:SS or HH:MM:SS.SS format> [additional flags like -c:v copy] <outputfile> > <crash logs>"
+      commands = "-loglevel debug -v verbose -report -i " + source + " -ss 00:00:00 -t 00:00:20 -c:a copy samplecut.mp4 > /home/marc/Node_ffmpegcli/ffmpeg_crash_logs/crash_log.txt";
+      // REMOVED -c:v copy because it was causing the screen to be black for the first few seconds.
+      //--------------------------------------------------------------------------------------------------//
+    }
 
 
 
-    //---------------------------(not working) Splice Videos Together (not working)---------------------------//
-    //--------------------------------------------------------------------------------------------------------//
+    if(command_selection == 2)
+    {
+      //------------------------------------ Cutting MP4-AVI ---------------------------------------------------//
+      //--------------------------------------------------------------------------------------------------------//
+      /*
+      * Note: Converting to a different filetype means we can't skip re-encoding.
+      * Re-encoding a 15 min clip of a 50 min video, going from mp4 to avi, took me
+      * roughly 2 minutes. Each additional 15 minutes took an additional 2 minutes,
+      * so for example a 45 min cut took a little under 6 minutes to finish.
+      */
+      // Note: For converting to a different filetype, such as avi, we can't skip re-encoding
+      
+      // <UNCOMMENT ME> commands = "-loglevel debug -v verbose -report -i " + source + " -ss 00:00:10 -t 00:00:20 output.avi > /home/marc/Node_ffmpegcli/ffmpeg_crash_logs/crash_log.txt";
+      
+      //--------------------------------------------------------------------------------------------------------//
+    }
 
-    // Note: Just splicing
-    /* Note: Tried different ways, first one comes directly from https://plutiedev.com/ffmpeg, but neither work as of right now */
 
-    // Note: The problem here is it gives this error: Stream specifier ':v' in filtergraph description [0:v][1:v]concat=n=2:v=1:a=1[out] matches no streams.
-    // <UNCOMMENT ME> commands = '-report -i ' + source + ' -i ' + source2 + ' -filter_complex "[0:v][1:v]concat=n=2:v=1:a=1[out]" -map "[out]" outputSplice.mp4 > /home/marc/Node_ffmpegcli/ffmpeg_crash_logs/crash_log.txt'
-    
-    // <UNCOMMENT ME> commands = '-report -i ' + source + ' -i ' + source2 + ' -filter_complex "[0:v][v0]; [1:v][v1]; [0:v][1:v]concat=n=2:v=1:a=1[out]" -map "[out]" outputSplice.mp4 > /home/marc/Node_ffmpegcli/ffmpeg_crash_logs/crash_log.txt'
-    
-    // <UNCOMMENT ME> commands = '-report -f concat -i ' + source + ' -i ' + source2 + ' -c copy output.mp4 > /home/marc/Node_ffmpegcli/ffmpeg_crash_logs/crash_log.txt'
-    
-    // Note: This..... doesn't work. It just produces a video that's 30 seconds (the exact length of one of the videos)
-    // <UNCOMMENT ME> commands = '-report -i "concat:'+source+'|'+source2+'" -c copy outputSplice.mp4'
 
-    /* Note: For trimming AND splicing at the same time: 
-     * ffmpeg -i video1.avi -i video2.avi -i video3.avi
-       -filter_complex "[0:v]trim=0:5[v0];
-                        [1:v]trim=60:65[v1];
-                        [2:v]trim=0:120[v2];
-                        [v0][v1][v2]concat=n=3:v=1:a=1[out]"
-       -map "[out]" output.mp4
-     * https://ffmpeg.org/ffmpeg-filters.html#trim
-    */
-    // <UNCOMMENT ME> commands = '-report -i ' + source + ' -i ' + source2 + ' -filter_complex "[0:v]trim=5:10[v0]; [1:v]trim=15:20[v1]; [v0][v1]concat=n=2:v=1:a=1[out]" -map "[out]" outputTrimSplice.mp4 > /home/marc/Node_ffmpegcli/ffmpeg_crash_logs/crash_log.txt'
-    
+    if(command_selection == 3)
+    {
+      //----------------------------------- Cutting MP4-MP4 and changing Resolution to 640x480 --------------------//
+      //-----------------------------------------------------------------------------------------------------------//
+      // Note: For converting to a different resolution, we'll test below to see
+      // how long it takes with and without re-encoding.
 
-    //--------------------------------------------------------------------------------------------------------//
+      // Note: Solution: Don't run one 
+
+      // Note: Without re-encoding (mp4->mp4)
+      // <UNCOMMENT ME> commands = "-loglevel debug -v verbose -report -i " + source + " -ss 00:00:10 -t 00:00:20 -c:a copy -s 640x480 output.mp4 > /home/marc/Node_ffmpegcli/ffmpeg_crash_logs/crash_log.txt"; // Had to use sample.mp4 again because it seems like it converts the ENTIRE video to 640x480, which takes forever.
+
+      // Note With re-encoding (mp4->avi)
+      // <UNCOMMENT ME> commands = "-loglevel debug -v verbose -report -i " + source + " -ss 00:00:10 -t 00:00:20 -s 640x480 DToutput.avi > /home/marc/Node_ffmpegcli/ffmpeg_crash_logs/crash_log.txt";
+      
+      //--------------------------------------------------------------------------------------------------------//
+    }
+
+
+    if(command_selection == 4)
+    {
+      //---------------------------(not working) Splice Videos Together (not working)---------------------------//
+      //--------------------------------------------------------------------------------------------------------//
+
+      // Note: Just splicing
+      /* Note: Tried different ways, first one comes directly from https://plutiedev.com/ffmpeg, but neither work as of right now */
+
+      // Note: The problem here is it gives this error: Stream specifier ':v' in filtergraph description [0:v][1:v]concat=n=2:v=1:a=1[out] matches no streams.
+      // <UNCOMMENT ME> commands = '-report -i ' + source + ' -i ' + source2 + ' -filter_complex "[0:v][1:v]concat=n=2:v=1:a=1[out]" -map "[out]" outputSplice.mp4 > /home/marc/Node_ffmpegcli/ffmpeg_crash_logs/crash_log.txt'
+      
+      // <UNCOMMENT ME> commands = '-report -i ' + source + ' -i ' + source2 + ' -filter_complex "[0:v][v0]; [1:v][v1]; [0:v][1:v]concat=n=2:v=1:a=1[out]" -map "[out]" outputSplice.mp4 > /home/marc/Node_ffmpegcli/ffmpeg_crash_logs/crash_log.txt'
+      
+      // <UNCOMMENT ME> commands = '-report -f concat -i ' + source + ' -i ' + source2 + ' -c copy output.mp4 > /home/marc/Node_ffmpegcli/ffmpeg_crash_logs/crash_log.txt'
+      
+      // Note: This..... doesn't work. It just produces a video that's 30 seconds (the exact length of one of the videos)
+      // <UNCOMMENT ME> commands = '-report -i "concat:'+source+'|'+source2+'" -c copy outputSplice.mp4'
+
+      /* Note: For trimming AND splicing at the same time: 
+      * ffmpeg -i video1.avi -i video2.avi -i video3.avi
+        -filter_complex "[0:v]trim=0:5[v0];
+                          [1:v]trim=60:65[v1];
+                          [2:v]trim=0:120[v2];
+                          [v0][v1][v2]concat=n=3:v=1:a=1[out]"
+        -map "[out]" output.mp4
+      * https://ffmpeg.org/ffmpeg-filters.html#trim
+      */
+      // <UNCOMMENT ME> commands = '-report -i ' + source + ' -i ' + source2 + ' -filter_complex "[0:v]trim=5:10[v0]; [1:v]trim=15:20[v1]; [v0][v1]concat=n=2:v=1:a=1[out]" -map "[out]" outputTrimSplice.mp4 > /home/marc/Node_ffmpegcli/ffmpeg_crash_logs/crash_log.txt'
+      
+
+      //--------------------------------------------------------------------------------------------------------//
+    }
 
 
 
