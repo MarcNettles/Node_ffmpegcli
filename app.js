@@ -23,6 +23,20 @@
 // Note: Solution: Clip the video first, then run another ffmpeg command to alter resolution
 
 
+
+
+/*                           Goals                      *
+*                                                       *
+* 1. Output a clip of an input video.                   *
+* 2. Modify the File-type                               *
+* 3. Modify the Resolution                              *
+* 4. Stitch multiple clips together                     *
+*                                                       *
+*                                                       *
+*                                                       */
+
+
+
 //---------------------------------------------------- Basic Set-Up -------------------------------------------------------------------//
 //-------------------------------------------------------------------------------------------------------------------------------------//
 // Note: The sponsor uses express, so we will too.
@@ -43,20 +57,6 @@ console.log(ffmpeg.runSync("-version"));
 
 
 
-
-//----------------------------------------------- Not working? ------------------------------------------------------------------------//
-//-------------------------------------------------------------------------------------------------------------------------------------//
-/* Note: Was trying to change the path to FFMPEG, but I don't know if this is working. Deleting FFMPEG from the original path just forces
- * FFMPEG to be redownloaded into ffmpeg-cli
-*/
-//ffmpeg.path = "/home/marc/ffmpeg";
-//console.log(ffmpeg.path)
-//-------------------------------------------------------------------------------------------------------------------------------------//
-
-
-
-
-
 //--------------------------------------- Setting Source for FFMPEG video -------------------------------------------------------------//
 //-------------------------------------------------------------------------------------------------------------------------------------//
 // Note: Temporary hardcoded source. I'm using both sample.mp4, a 30s clip found in the same directory as app.js, for most of the cutting.
@@ -72,10 +72,6 @@ app.set('view engine', 'pug');
 //-------------------------------------------------------------------------------------------------------------------------------------//
 
 
-
-
-
-
 //------------------------------------------------- Routing GET requests --------------------------------------------------------------//
 //-------------------------------------------------------------------------------------------------------------------------------------//
 // Note: Route when we go to "http://localhost:" + port + "/"
@@ -87,6 +83,29 @@ app.get('/', (req,res) =>{ // (req,res) is likely where we'll be getting our sta
     */
 
 
+
+
+    // Getting the start, end, and file path from the front-end.
+    try{
+      var start_time = req.params('start');
+    }
+    catch(err){
+      console.log("Error retrieving start_time.");
+    }
+    
+    try{
+      var end_time = req.params('end');
+    }
+    catch(err){
+      console.log("Error retrieving end_time.");
+    }
+    
+    try{
+      var video_path = req.params('vid_path');
+    }
+    catch(err){
+      console.log("Error retrieving video_path.");
+    }
 
 
     //-------- Select What You'd Like to Do ----------//
@@ -116,14 +135,14 @@ app.get('/', (req,res) =>{ // (req,res) is likely where we'll be getting our sta
       // Note:  Commented Out Temporarily: -loglevel debug -v verbose -report 
 
       // Note: Cutting video syntax: "-i <inputfile> -ss <start of cut in HH:MM:SS or HH:MM:SS.SS format> -t <length of cut in HH:MM:SS or HH:MM:SS.SS format> [additional flags like -c:v copy] <outputfile> > <crash logs>"
-      commands = "-loglevel debug -v verbose -report -i " + source + " -ss 00:00:00 -t 00:00:20 -c:a copy samplecut.mp4 > /home/marc/Node_ffmpegcli/ffmpeg_crash_logs/crash_log.txt";
+      commands = "-loglevel debug -v verbose -report -i " + source + " -ss 00:00:00 -t 00:00:20 -c:a copy output.mp4 > /home/marc/Node_ffmpegcli/ffmpeg_crash_logs/crash_log.txt";
       // REMOVED -c:v copy because it was causing the screen to be black for the first few seconds.
       //--------------------------------------------------------------------------------------------------//
     }
 
 
 
-    if(command_selection == 2)
+    else if(command_selection == 2)
     {
       //------------------------------------ Cutting MP4-AVI ---------------------------------------------------//
       //--------------------------------------------------------------------------------------------------------//
@@ -135,7 +154,7 @@ app.get('/', (req,res) =>{ // (req,res) is likely where we'll be getting our sta
       */
       // Note: For converting to a different filetype, such as avi, we can't skip re-encoding
       
-      // <UNCOMMENT ME> commands = "-loglevel debug -v verbose -report -i " + source + " -ss 00:00:10 -t 00:00:20 output.avi > /home/marc/Node_ffmpegcli/ffmpeg_crash_logs/crash_log.txt";
+      commands = "-loglevel debug -v verbose -report -i " + source + " -ss 00:00:10 -t 00:00:20 output.avi > /home/marc/Node_ffmpegcli/ffmpeg_crash_logs/crash_log.txt";
       
       //--------------------------------------------------------------------------------------------------------//
     }
@@ -155,7 +174,7 @@ app.get('/', (req,res) =>{ // (req,res) is likely where we'll be getting our sta
       // <UNCOMMENT ME> commands = "-loglevel debug -v verbose -report -i " + source + " -ss 00:00:10 -t 00:00:20 -c:a copy -s 640x480 output.mp4 > /home/marc/Node_ffmpegcli/ffmpeg_crash_logs/crash_log.txt"; // Had to use sample.mp4 again because it seems like it converts the ENTIRE video to 640x480, which takes forever.
 
       // Note With re-encoding (mp4->avi)
-      // <UNCOMMENT ME> commands = "-loglevel debug -v verbose -report -i " + source + " -ss 00:00:10 -t 00:00:20 -s 640x480 DToutput.avi > /home/marc/Node_ffmpegcli/ffmpeg_crash_logs/crash_log.txt";
+      commands = "-loglevel debug -v verbose -report -i " + source + " -ss 00:00:10 -t 00:00:20 -s 640x480 DToutput.avi > /home/marc/Node_ffmpegcli/ffmpeg_crash_logs/crash_log.txt";
       
       //--------------------------------------------------------------------------------------------------------//
     }
@@ -170,7 +189,7 @@ app.get('/', (req,res) =>{ // (req,res) is likely where we'll be getting our sta
       /* Note: Tried different ways, first one comes directly from https://plutiedev.com/ffmpeg, but neither work as of right now */
 
       // Note: The problem here is it gives this error: Stream specifier ':v' in filtergraph description [0:v][1:v]concat=n=2:v=1:a=1[out] matches no streams.
-      // <UNCOMMENT ME> commands = '-report -i ' + source + ' -i ' + source2 + ' -filter_complex "[0:v][1:v]concat=n=2:v=1:a=1[out]" -map "[out]" outputSplice.mp4 > /home/marc/Node_ffmpegcli/ffmpeg_crash_logs/crash_log.txt'
+      commands = '-report -i ' + source + ' -i ' + source2 + ' -filter_complex "[0:v][1:v]concat=n=2:v=1:a=1[out]" -map "[out]" outputSplice.mp4 > /home/marc/Node_ffmpegcli/ffmpeg_crash_logs/crash_log.txt'
       
       // <UNCOMMENT ME> commands = '-report -i ' + source + ' -i ' + source2 + ' -filter_complex "[0:v][v0]; [1:v][v1]; [0:v][1:v]concat=n=2:v=1:a=1[out]" -map "[out]" outputSplice.mp4 > /home/marc/Node_ffmpegcli/ffmpeg_crash_logs/crash_log.txt'
       

@@ -1,0 +1,36 @@
+ffmpeg started on 2022-12-22 at 22:36:05
+Report written to "ffmpeg-20221222-223605.log"
+Log level: 48
+Command line:
+/home/marc/Node_ffmpegcli/node_modules/ffmpeg-cli/ffmpeg/linuxx64/ffmpeg -loglevel debug -v verbose -report -i TheNumber23.avi TheNumber23.mkv
+ffmpeg version 5.1.1-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2000-2022 the FFmpeg developers
+  built with gcc 8 (Debian 8.3.0-6)
+  configuration: --enable-gpl --enable-version3 --enable-static --disable-debug --disable-ffplay --disable-indev=sndio --disable-outdev=sndio --cc=gcc --enable-fontconfig --enable-frei0r --enable-gnutls --enable-gmp --enable-libgme --enable-gray --enable-libfribidi --enable-libass --enable-libfreetype --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-librubberband --enable-libsoxr --enable-libspeex --enable-libsrt --enable-libvorbis --enable-libopus --enable-libtheora --enable-libvidstab --enable-libvo-amrwbenc --enable-libvpx --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxml2 --enable-libxvid --enable-libzimg
+  libavutil      57. 28.100 / 57. 28.100
+  libavcodec     59. 37.100 / 59. 37.100
+  libavformat    59. 27.100 / 59. 27.100
+  libavdevice    59.  7.100 / 59.  7.100
+  libavfilter     8. 44.100 /  8. 44.100
+  libswscale      6.  7.100 /  6.  7.100
+  libswresample   4.  7.100 /  4.  7.100
+  libpostproc    56.  6.100 / 56.  6.100
+Splitting the commandline.
+Reading option '-loglevel' ... matched as option 'loglevel' (set logging level) with argument 'debug'.
+Reading option '-v' ... matched as option 'v' (set logging level) with argument 'verbose'.
+Reading option '-report' ... matched as option 'report' (generate a report) with argument '1'.
+Reading option '-i' ... matched as input url with argument 'TheNumber23.avi'.
+Reading option 'TheNumber23.mkv' ... matched as output url.
+Finished splitting the commandline.
+Parsing a group of options: global .
+Applying option loglevel (set logging level) with argument debug.
+Applying option v (set logging level) with argument verbose.
+Applying option report (generate a report) with argument 1.
+Successfully parsed a group of options.
+Parsing a group of options: input url TheNumber23.avi.
+Successfully parsed a group of options.
+Opening an input file: TheNumber23.avi.
+[NULL @ 0xc4ac200] Opening 'TheNumber23.avi' for reading
+[file @ 0xc4ac800] Setting default whitelist 'file,crypto,data'
+[avi @ 0xc4ac200] Format avi detected only with low score of 1, misdetection possible!
+[AVIOContext @ 0xc4b4b40] Statistics: 1048576 bytes read, 0 seeks
+TheNumber23.avi: Invalid data found when processing input
